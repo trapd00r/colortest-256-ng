@@ -1,6 +1,8 @@
 #!/usr/bin/perl
 # colortest-256-ng 
 # prints table of available colors for terminals supporting 256 colors
+# optionally takes arbitary input and colors it randomly
+# this is strictly for my homeboy andash :)
 # trapd00r 2010
 use strict;
 use Getopt::Long;
