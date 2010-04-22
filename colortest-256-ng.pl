@@ -9,6 +9,7 @@ use Getopt::Long;
 use List::Util qw(shuffle);
 
 my %colors;
+my $unicode = "█▓▒░";
 for(my $i=1;$i<255;$i++) {
   $i = sprintf("%03s", $i);
   my $escaped_escape = "\\033[38;5;$i".'m';
@@ -17,7 +18,7 @@ for(my $i=1;$i<255;$i++) {
 
 if(!@ARGV) {
   foreach my $str(sort(keys(%colors))) {
-    print "$str $colors{$str}\n";
+    print "$unicode $str $colors{$str}\n";
   }
   print "\033[0m\n";
   print << "USAGE";
