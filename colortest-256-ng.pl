@@ -9,7 +9,7 @@ use Getopt::Long;
 use List::Util qw(shuffle);
 
 my %colors;
-for(my $i=0;$i<256;$i++) {
+for(my $i=1;$i<255;$i++) {
   $i = sprintf("%03s", $i);
   my $escaped_escape = "\\033[38;5;$i".'m';
   $colors{$escaped_escape} = "\033[38;5;$i".'m';
