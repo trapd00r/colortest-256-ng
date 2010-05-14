@@ -1,0 +1,28 @@
+#!/usr/bin/perl
+# colortest-256-ng 
+# prints table of available colors for terminals supporting 256 colors
+# optionally takes arbitary input and colors it randomly
+# this is strictly for my homeboy andash :)
+# trapd00r 2010
+use strict;
+use Data::Dumper;
+
+
+
+my %colors = (); # hash av... hash
+my $unicode = "░▒▓██▓▒░";
+
+for(my $i = 0; $i < 256; $i++) {
+  $i = sprintf("%03s", $i);
+  $colors{"\033[38;5;$i".'m'} = "\033[48;5;$i".'m';
+}
+
+my $oldcolor = "\033[0m";
+sub colorme {
+  for my $fg(sort(keys %colors)) {
+    my $int = '\033[38;5;'.substr($fg, 7);
+    print "$colors{$fg}  $oldcolor$fg$unicode$colors{$fg} $oldcolor $fg$int\n";
+  }
+}
+
+colorme();
