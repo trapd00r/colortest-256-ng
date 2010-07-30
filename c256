@@ -29,7 +29,7 @@ sub square {
     else {
       $end = "\033[0m";
     }
-    print "\033[3m\033[38;5;$i" . 'm' . $i, $color{$i},$end;
+    print "\033[3m\033[38;5;$i" . 'm' . " $i ", $color{$i},$end;
   }
   print "\n";
   exit(0);
