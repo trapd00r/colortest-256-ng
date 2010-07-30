@@ -1,0 +1,83 @@
+#!/usr/bin/perl
+use strict;
+use Data::Dumper;
+
+my %colors = (); 
+my $unicode = "░▒▓██▓▒░";
+
+my %color = ();
+for my $i(0..255) { # 11,12, 23
+  $i = sprintf("%03d",$i);
+  $color{$i} = "\033[48;5;$i" . 'm' . "\033[38;5;$i" . 'm' . 'xxx' . "\033[0m";
+}
+
+square(12) unless(@ARGV);
+
+if($ARGV[0] =~ /(?:-h.*|--h.*|h.*)/) {
+  print "Give argument not matching /(?:-h.*|--h.*|h.*)/ for the list format\n";
+  exit(0);
+}
+list();
+
+sub square {
+  my $num = shift;
+  my $end = undef;
+  for my $i(sort(keys(%color))) {
+    if($i%$num==0) {
+      $end = "\033[0m\t\n";
+    }
+    else {
+      $end = "\033[0m";
+    }
+    print "\033[3m\033[38;5;$i" . 'm' . $i, $color{$i},$end;
+  }
+  print "\n";
+  exit(0);
+}
+
+sub list {
+  for my $i(sort(keys(%color))) {
+    print $color{$i},"\033[38;5;$i" . 'm', $unicode,"  $i  ", "\033[0m\n";
+  }
+}
+
+=pod
+
+=head1 NAME
+
+  colortest-256-ng - print various tables in 256 colors
+
+=head1 SYNOPSIS
+
+  c256 [ random argument not matching /(?:-?-?h.*)/ ]
+
+=head1 DESCRIPTION
+
+c256 will tell you if your terminal supports 256 colors.
+It can also be used to see what color responds to what integer (0..255)
+
+=head1 OPTIONS
+
+c256 will show the default square... square if no argument is provided.
+To see a long listing, provide an argument that does not match /(?:-?-?h.*)/
+
+=head1 TRIVIA
+
+The background notation to use is <ESC>38;5 - \033[38;5;100m
+
+The foreground notation to use is <ESC>48;5 - \033[48;5;197m
+
+The foreground and background colors can be changed on the fly:
+  printf "\033[4;200;rgb/7a/67/ee\033\\"
+
+=head1 AUTHOR
+
+Written by Magnus Woldrich
+
+=head1 COPYRIGHT
+
+(C) Copyright 2010 Magnus Woldrich. 
+
+License GPLv2.
+
+=cut
