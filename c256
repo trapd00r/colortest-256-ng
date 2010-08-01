@@ -7,7 +7,7 @@ my %colors = ();
 my $unicode = "░▒▓██▓▒░";
 
 my %color = ();
-for my $i(0..255) { # 11,12, 23
+for my $i(1..255) { # check why \033[38;5;000 is illegal
   $i = sprintf("%03d",$i);
   $color{$i} = "\033[48;5;$i" . 'm' . "\033[38;5;$i" . 'm' . "   " . "\033[0m";
 }
