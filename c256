@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 use strict;
+use Getopt::Long;
 use Data::Dumper;
 
 my %colors = (); 
@@ -8,28 +9,39 @@ my $unicode = "░▒▓██▓▒░";
 my %color = ();
 for my $i(0..255) { # 11,12, 23
   $i = sprintf("%03d",$i);
-  $color{$i} = "\033[48;5;$i" . 'm' . "\033[38;5;$i" . 'm' . 'xxx' . "\033[0m";
+  $color{$i} = "\033[48;5;$i" . 'm' . "\033[38;5;$i" . 'm' . "   " . "\033[0m";
 }
 
-square(12) unless(@ARGV);
+square(8) unless(@ARGV);
 
 if($ARGV[0] =~ /(?:-h.*|--h.*|h.*)/) {
   print "Give argument not matching /(?:-h.*|--h.*|h.*)/ for the list format\n";
   exit(0);
 }
-list();
+
+our($opt_sqsize);
+GetOptions(
+  'size:s'  => \$opt_sqsize,
+  list      => \&list,
+  sq        => \&square,
+);
+
+square($opt_sqsize) if(defined($opt_sqsize));
 
 sub square {
   my $num = shift;
   my $end = undef;
+  my $atr = undef;
   for my $i(sort(keys(%color))) {
-    if($i%$num==0) {
-      $end = "\033[0m\t\n";
+    if($i % $num==0) {
+      $end = "\033[0m  \n";
+      $atr = "\033[1m";
     }
     else {
       $end = "\033[0m";
+      $atr = "\033[3m";
     }
-    print "\033[3m\033[38;5;$i" . 'm' . " $i ", $color{$i},$end;
+    print "$atr\033[38;5;$i" . 'm' . " $i ", $color{$i},$end;
   }
   print "\n";
   exit(0);
