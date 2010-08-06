@@ -2,6 +2,7 @@
 use strict;
 use Getopt::Long;
 use Data::Dumper;
+use Pod::Usage;
 
 my %colors = (); 
 my $unicode = "░▒▓██▓▒░";
@@ -14,16 +15,13 @@ for my $i(1..255) { # check why \033[38;5;000 is illegal
 
 square(8) unless(@ARGV);
 
-if($ARGV[0] =~ /(?:-h.*|--h.*|h.*)/) {
-  print "Give argument not matching /(?:-h.*|--h.*|h.*)/ for the list format\n";
-  exit(0);
-}
-
 our($opt_sqsize);
 GetOptions(
-  'size:s'  => \$opt_sqsize,
+  'col:s'   => \$opt_sqsize,
   list      => \&list,
   sq        => \&square,
+  help      => sub { pod2usage(verbose => 1)},
+  man       => sub { pod2usage(verbose => 3)},
 );
 
 square($opt_sqsize) if(defined($opt_sqsize));
@@ -51,6 +49,7 @@ sub list {
   for my $i(sort(keys(%color))) {
     print $color{$i},"\033[38;5;$i" . 'm', $unicode,"  $i  ", "\033[0m\n";
   }
+  exit(0);
 }
 
 =pod
@@ -61,7 +60,7 @@ sub list {
 
 =head1 SYNOPSIS
 
-  c256 [ random argument not matching /(?:-?-?h.*)/ ]
+  c256 [-s size ] [-l | -sq]
 
 =head1 DESCRIPTION
 
@@ -70,8 +69,12 @@ It can also be used to see what color responds to what integer (0..255)
 
 =head1 OPTIONS
 
-c256 will show the default square... square if no argument is provided.
-To see a long listing, provide an argument that does not match /(?:-?-?h.*)/
+  -s,   --square  square format (default)
+  -l,   --list    list format
+  -c,   --col     n columns
+
+  -h    --help    help message
+  -m    --man     view manpage
 
 =head1 TRIVIA
 
