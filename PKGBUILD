@@ -2,8 +2,8 @@
 pkgname=colortest-256-ng-git
 pkgver=20100822
 pkgrel=1
-pkgdesc="Tool that makes it easier finding out what numbers represent what\
-  color (useful for scripting)"
+pkgdesc="Gives a visual presentation of what the 256 colors indexes is and how \ 
+         they look"
 arch=('any')
 url="http://github.com/trapd00r/colortest-256-ng.git"
 license=('GPLv2')
