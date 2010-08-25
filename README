@@ -1,0 +1,34 @@
+NAME
+      colortest-256-ng - print various tables in 256 colors
+
+SYNOPSIS
+      c256 [-s size ] [-l | -sq]
+
+DESCRIPTION
+    c256 will tell you if your terminal supports 256 colors. It can also be
+    used to see what color responds to what integer (0..255)
+
+OPTIONS
+      -s,   --square  square format (default)
+      -l,   --list    list format
+      -c,   --col     n columns
+
+      -h    --help    help message
+      -m    --man     view manpage
+
+TRIVIA
+    The background notation to use is <ESC>38;5 - \033[38;5;100m
+
+    The foreground notation to use is <ESC>48;5 - \033[48;5;197m
+
+    The foreground and background colors can be changed on the fly: printf
+    "\033[4;200;rgb/7a/67/ee\033\\"
+
+AUTHOR
+    Written by Magnus Woldrich
+
+COPYRIGHT
+    (C) Copyright 2010 Magnus Woldrich.
+
+    License GPLv2.
+
