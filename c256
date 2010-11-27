@@ -1,66 +1,67 @@
 #!/usr/bin/perl
+use vars qw($APP $VERSION);
+$APP     = 'c256';
+$VERSION = 0.123;
+
 use strict;
 use Getopt::Long;
 use Data::Dumper;
 use Pod::Usage;
 
-my %colors = (); 
 my $unicode = "░▒▓██▓▒░";
+my @colors = map { sprintf("%3d", $_) } (0 .. 255);
 
-my %color = ();
-for my $i(1..255) { # check why \033[38;5;000 is illegal
-  $i = sprintf("%03d",$i);
-  $color{$i} = "\033[48;5;$i" . 'm' . "\033[38;5;$i" . 'm' . "   " . "\033[0m";
-}
+our($opt_sqsize) = (16);
 
-square(8) unless(@ARGV);
+@ARGV or square($opt_sqsize);
 
-our($opt_sqsize);
 GetOptions(
-  'col:s'   => \$opt_sqsize,
-  list      => \&list,
-  sq        => \&square,
-  help      => sub { pod2usage(verbose => 1)},
-  man       => sub { pod2usage(verbose => 3)},
+  'col:i'   => \$opt_sqsize,
+  'list'    => \&list,
+  'square'  => \&square,
+
+  'help'      => sub { print "$APP v$VERSION\n\n"; pod2usage(verbose => 1)},
+  'man'       => sub { pod2usage(verbose => 3)},
 );
 
-square($opt_sqsize) if(defined($opt_sqsize));
+square($opt_sqsize);
 
 sub square {
-  my $num = shift;
-  my $end = undef;
-  my $atr = undef;
-  for my $i(sort(keys(%color))) {
-    if($i % $num==0) {
-      $end = "\033[0m  \n";
-      $atr = "\033[1m";
+  my $col = shift // 16;
+  my $end = int( 256/$col );
+  my @colors = map { sprintf("%3d", $_) } (0 .. 255);
+
+  for my $e(0 .. $end) {
+    my @o;
+    for( my $c = $e; $c < $colors[-1]; $c += $end + 1) {
+      my $esc = "\e[48;5;$colors[$c]m$colors[$c]\e[0m";
+      push(@o, $esc);
     }
-    else {
-      $end = "\033[0m";
-      $atr = "\033[3m";
-    }
-    print "$atr\033[38;5;$i" . 'm' . " $i ", $color{$i},$end;
+    print "@o\n";
   }
+
   print "\n";
-  exit(0);
+  exit 0;
 }
 
+
 sub list {
-  for my $i(sort(keys(%color))) {
-    print $color{$i},"\033[38;5;$i" . 'm', $unicode,"  $i  ", "\033[0m\n";
+  for my $i(@colors) {
+    printf("\e[38;5;%d%s %3d \e[48;5;$i%s %s %s %s \e[0m\n",
+      $i, 'm', $i,  $unicode, $i);
   }
-  exit(0);
+  exit 0;
 }
 
 =pod
 
 =head1 NAME
 
-  colortest-256-ng - print various tables in 256 colors
+colortest-256-ng - print various tables in 256 colors
 
-=head1 SYNOPSIS
+=head1 USAGE
 
-  c256 [-s size ] [-l | -sq]
+  c256 [-c columns] [OPTIONS]
 
 =head1 DESCRIPTION
 
@@ -82,16 +83,13 @@ The background notation to use is <ESC>38;5 - \033[38;5;100m
 
 The foreground notation to use is <ESC>48;5 - \033[48;5;197m
 
-The foreground and background colors can be changed on the fly:
-  printf "\033[4;200;rgb/7a/67/ee\033\\"
-
 =head1 AUTHOR
 
 Written by Magnus Woldrich
 
 =head1 COPYRIGHT
 
-(C) Copyright 2010 Magnus Woldrich. 
+(C) Copyright 2010 Magnus Woldrich.
 
 License GPLv2.
 
