@@ -57,7 +57,7 @@ sub list {
 
 =head1 NAME
 
-colortest-256-ng - print various tables in 256 colors
+c256 - print various tables in 256 colors
 
 =head1 USAGE
 
