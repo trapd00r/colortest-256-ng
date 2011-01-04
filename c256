@@ -1,27 +1,31 @@
 #!/usr/bin/perl
 use vars qw($APP $VERSION);
 $APP     = 'c256';
-$VERSION = 0.123;
+$VERSION = 0.130;
 
 use strict;
 use Getopt::Long;
 use Data::Dumper;
 use Pod::Usage;
+use Term::ExtendedColor;
+use Term::ExtendedColor::Xresources;
 
 my $unicode = "░▒▓██▓▒░";
 my @colors = map { sprintf("%3d", $_) } (0 .. 255);
 
 our($opt_sqsize) = (16);
-
+our($opt_hex_values);
 @ARGV or square($opt_sqsize);
 
 GetOptions(
   'col:i'   => \$opt_sqsize,
   'list'    => \&list,
   'square'  => \&square,
+  'hex'     => sub { $opt_hex_values++; square(); },
 
-  'help'      => sub { print "$APP v$VERSION\n\n"; pod2usage(verbose => 1)},
-  'man'       => sub { pod2usage(verbose => 3)},
+  'h|help'      => sub { print "$APP v$VERSION\n\n"; pod2usage(verbose => 1)},
+  'm|man'       => sub { pod2usage(verbose => 3)},
+  'v|version'   => sub { print "$APP v$VERSION\n" and exit 0; },
 );
 
 square($opt_sqsize);
@@ -34,7 +38,16 @@ sub square {
   for my $e(0 .. $end) {
     my @o;
     for( my $c = $e; $c < $colors[-1]; $c += $end + 1) {
-      my $esc = "\e[48;5;$colors[$c]m$colors[$c]\e[0m";
+      my $esc;
+      if($opt_hex_values) {
+        my $rgb = get_xterm_colors($c);
+        my $current_color = $rgb->{$c}->{rgb};
+
+        $esc = fg($c, $current_color);
+      }
+      else {
+        $esc = "\e[48;5;$colors[$c]m$colors[$c]\e[0m";
+      }
       push(@o, $esc);
     }
     print "@o\n";
@@ -66,13 +79,15 @@ c256 - print various tables in 256 colors
 =head1 DESCRIPTION
 
 c256 will tell you if your terminal supports 256 colors.
-It can also be used to see what color responds to what integer (0..255)
+It can also be used to list the actual hexadecimal RGB values of each mapped
+color.
 
 =head1 OPTIONS
 
   -s,   --square  square format (default)
   -l,   --list    list format
   -c,   --col     n columns
+        --hex     show hexadecimal values of each color
 
   -h    --help    help message
   -m    --man     view manpage
