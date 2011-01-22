@@ -7,8 +7,9 @@ use strict;
 use Getopt::Long;
 use Data::Dumper;
 use Pod::Usage;
-use Term::ExtendedColor;
-use Term::ExtendedColor::Xresources;
+use Term::ExtendedColor qw(fg bg);
+use Term::ExtendedColor::Xresources qw(get_xterm_color);
+use Data::Dumper;
 
 my $unicode = "░▒▓██▓▒░";
 my @colors = map { sprintf("%3d", $_) } (0 .. 255);
@@ -31,16 +32,31 @@ GetOptions(
 square($opt_sqsize);
 
 sub square {
-  my $col = shift // 16;
+  my $col = shift;
+  $col = 16 if(!defined($col) or (!$col));
+
   my $end = int( 256/$col );
   my @colors = map { sprintf("%3d", $_) } (0 .. 255);
+
+
+  if($opt_hex_values) {
+    my $rgb     = get_xterm_color({ index => [@colors] });
+    my $current = $rgb->{$rgb}->{rgb};
+
+    for my $index(sort(keys(%$rgb))) {
+      printf("%03d: %s\n", $index, fg(sprintf("%d", $index), $rgb->{$index}->{rgb}))
+        unless(!exists($rgb->{$index}->{rgb}));
+    }
+    exit;
+  }
+
 
   for my $e(0 .. $end) {
     my @o;
     for( my $c = $e; $c < $colors[-1]; $c += $end + 1) {
       my $esc;
       if($opt_hex_values) {
-        my $rgb = get_xterm_colors($c);
+        my $rgb = get_xterm_color({ index => $c });
         my $current_color = $rgb->{$c}->{rgb};
 
         $esc = fg($c, $current_color);
