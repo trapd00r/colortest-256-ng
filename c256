@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 use vars qw($APP $VERSION);
 $APP     = 'c256';
-$VERSION = '0.131';
+$VERSION = '0.134';
 
 use strict;
 use Getopt::Long;
@@ -12,7 +12,7 @@ use Term::ExtendedColor::Xresources qw(get_xterm_color);
 use Data::Dumper;
 
 my $unicode = "░▒▓██▓▒░";
-my @colors = map { sprintf("%3d", $_) } (0 .. 255);
+my @colors = map { sprintf("% 3d", $_) } (0 .. 255);
 
 our($opt_sqsize) = (16);
 our($opt_hex_values);
@@ -36,7 +36,7 @@ sub square {
   $col = 16 if(!defined($col) or (!$col));
 
   my $end = int( 256/$col );
-  my @colors = map { sprintf("%3d", $_) } (0 .. 255);
+  my @colors = map { sprintf("%03d", $_) } (0 .. 255);
 
 
   if($opt_hex_values) {
@@ -44,7 +44,7 @@ sub square {
     my $current = $rgb->{$rgb}->{rgb};
 
     for my $index(sort(keys(%$rgb))) {
-      printf("%03d: %s\n", $index, fg(sprintf("%d", $index), $rgb->{$index}->{rgb}))
+      printf("%d: %s\n", $index, fg(sprintf("%d", $index), $rgb->{$index}->{rgb}))
         unless(!exists($rgb->{$index}->{rgb}));
     }
     exit;
@@ -62,7 +62,7 @@ sub square {
         $esc = fg($c, $current_color);
       }
       else {
-        $esc = "\e[48;5;$colors[$c]m$colors[$c]\e[0m";
+        $esc = "\033[48;5;$colors[$c]m$colors[$c]\033[0m";
       }
       push(@o, $esc);
     }
@@ -76,7 +76,7 @@ sub square {
 
 sub list {
   for my $i(@colors) {
-    printf("\e[38;5;%d%s %3d \e[48;5;$i%s %s %s %s \e[0m\n",
+    printf("\033[38;5;%d%s %d \033[48;5;$i%s %s %s %s \033[0m\n",
       $i, 'm', $i,  $unicode, $i);
   }
   exit 0;
